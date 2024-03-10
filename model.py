@@ -54,16 +54,24 @@ class GeoCrowdNet(pl.LightningModule):
             assert annotations_list is not None, "Annotations must be provided for MLE-based initialization"
             mle_confusion_matrices = confusion_matrix_init_mle_based(annotations_list, num_annotators, num_classes)
             self.confusion_matrices = nn.ParameterList([nn.Parameter(cm) for cm in mle_confusion_matrices])
+        elif init_method == 'deviation_from_identity':
+            self.confusion_matrices = nn.ParameterList(
+                [nn.Parameter(torch.eye(num_classes) + 0.1 * torch.randn(num_classes, num_classes)) for _ in
+                 range(num_annotators)])
         else:
             raise ValueError(f"Invalid initialization method: {init_method}")
 
     def forward(self, x):
-        return self.classifier(x)
+        f_outputs = self.classifier(x)
+        # A = torch.stack([F.softmax(cm, dim=1) for cm in self.confusion_matrices])
+        A = torch.stack([cm for cm in self.confusion_matrices])
+        y = torch.einsum('ij, bkj -> ibk', f_outputs, A)
+        return f_outputs, y, A
 
     def training_step(self, batch, batch_idx):
         x, annotations, annot_onehot, annot_mask, annot_list, y = batch
 
-        f_outputs = self(x)
+        f_outputs, y_preds, A = self(x)
 
         if self.args.plain:
             loss = F.cross_entropy(f_outputs, y)
@@ -72,14 +80,18 @@ class GeoCrowdNet(pl.LightningModule):
             for m in range(self.num_annotators):
                 mask = annot_mask[:, m] != 0  # Handle missing labels
                 if torch.any(mask):
-                    annotator_preds = torch.matmul(f_outputs[mask], F.softmax(self.confusion_matrices[m]))
-                    loss += F.cross_entropy(annotator_preds, annot_onehot[mask, m])
+                    loss += F.cross_entropy(y_preds[mask, m], annot_onehot[mask, m])
 
             loss /= self.num_annotators
 
         if self.regularization_type == 'F':
+            flag = 0
             F_matrix = f_outputs
             reg_term = torch.logdet(torch.matmul(F_matrix.T, F_matrix))
+            # check if reg_term is nan
+            if torch.isnan(reg_term) or torch.isinf(reg_term):
+                reg_term = 0
+                flag = 1
         elif self.regularization_type == 'W':
             W_matrix = F.softmax(torch.stack([cm for cm in self.confusion_matrices]), dim=1)
             W_matrix = W_matrix.view(self.num_annotators * self.num_classes, self.num_classes)
@@ -97,7 +109,7 @@ class GeoCrowdNet(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, annotations, annot_onehot, annot_mask, annot_list, y = batch
-        f_outputs = self(x)
+        f_outputs, y_preds, A = self(x)
         loss = F.cross_entropy(f_outputs, y)
         self.log('val_loss', loss)
         self.val_accuracy(torch.argmax(f_outputs, dim=1), y)
@@ -105,7 +117,7 @@ class GeoCrowdNet(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         x, y = batch
-        f_outputs = self(x)
+        f_outputs, y_preds, A = self(x)
         self.test_accuracy(torch.argmax(f_outputs, dim=1), y)
         self.log('test_accuracy', self.test_accuracy, on_step=False, on_epoch=True)
 
