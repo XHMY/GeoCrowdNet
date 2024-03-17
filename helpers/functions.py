@@ -50,7 +50,7 @@ def generate_confusion_matrices(M, K, gamma, type):
                 A[m] = A[m] + 0.0001 * np.identity(K)
                 A[m] = np.matmul(A[m], np.diag(np.divide(1, np.sum(A[m], axis=0))))
     elif type == 'separable-and-uniform-random':
-        i = np.asscalar(np.random.choice(M, 1))
+        i = np.random.choice(M, 1).item()
         A[i] = np.identity(K) + gamma * np.random.uniform(0, 1, (K, K))
         A[i] = np.matmul(A[i], np.diag(np.divide(1, np.sum(A[i], axis=0))))
         # A = (1/K)*np.ones((M,K,K))
@@ -68,7 +68,7 @@ def generate_confusion_matrices(M, K, gamma, type):
             A[m] = np.matmul(A[m], np.diag(np.divide(1, np.sum(A[m], axis=0))))
     elif type == 'separable-and-uniform':
         A = (1 / K) * np.ones((M, K, K))
-        i = np.asscalar(np.random.choice(M, 1))
+        i = np.random.choice(M, 1).item()
         A[i] = np.identity(K) + gamma * np.random.uniform(0, 1, (K, K))
         A[i] = np.matmul(A[i], np.diag(np.divide(1, np.sum(A[i], axis=0))))
         # A[i] = ((1-gamma)/K)*np.ones((K,K))
@@ -111,12 +111,12 @@ def generate_annotator_labels(A, pattern, p, l, y):
     M = np.shape(A)[0]
     N = np.shape(y)[0]
     K = np.shape(A)[1]
-    f = np.zeros((N, M, K))
+    f = np.zeros((N, M, K), dtype=np.float32)
     annotations = -1 * np.ones((N, M))
-    annotator_label_mask = np.zeros((N, M))
+    annotator_label_mask = np.zeros((N, M), dtype=np.int64)
     annotator_label = {}
     for i in range(M):
-        annotator_label['softmax' + str(i) + '_label'] = np.zeros((N, K))
+        annotator_label['softmax' + str(i) + '_label'] = np.zeros((N, K), dtype=np.int64)
 
     if pattern == 'random':
         mask = np.random.binomial(1, p, np.shape(annotations))
@@ -185,7 +185,7 @@ def generate_annotator_labels(A, pattern, p, l, y):
                 row.append(one_hot(annotations[i, r], K)[0, :])
         answers_bin_missings.append(row)
 
-    answers_bin_missings = np.array(answers_bin_missings)
+    answers_bin_missings = np.array(answers_bin_missings, dtype=np.int32)
 
     return f, annotations, answers_bin_missings, annotator_label, annotators_per_sample, annotator_label_mask
 

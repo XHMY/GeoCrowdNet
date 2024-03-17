@@ -11,8 +11,8 @@ from model import GeoCrowdNet
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--M', type=int, help='No of annotators', default=5)
-    parser.add_argument('--K', type=int, help='No of classes', default=3)
+    parser.add_argument('--M', type=int, help='No of annotators', default=44)
+    parser.add_argument('--K', type=int, help='No of classes', default=10)
     parser.add_argument('--N', type=int, help='No of data samples (synthetic data)', default=10000)
     parser.add_argument('--R', type=int, help='Dimension of data samples (synthetic data)', default=5)
     parser.add_argument('--annotator_label_pattern', type=str,
@@ -25,7 +25,7 @@ def parse_args():
                                                           'hammer-spammer, classwise-hammer-spammer, pairwise-flipper',
                         default='separable-and-uniform')
     parser.add_argument('--gamma', type=float, help='hammer probability in hammer-spammer type', default=0.01)
-    parser.add_argument('--dataset', type=str, help='synthetic or cifar10 or mnist', default='labelme')
+    parser.add_argument('--dataset', type=str, help='synthetic or cifar10 or mnist', default='music')
     parser.add_argument('--annotator_type', type=str,
                         help='synthetic, machine-classifier, good-bad-annotator-mix or real', default='real')
     parser.add_argument('--good_bad_annotator_ratio', type=float,
@@ -40,7 +40,7 @@ def parse_args():
                         help='close_to_identity or mle_based or deviation_from_identity', default='close_to_identity')
     parser.add_argument('--proposed_projection_type', type=str,
                         help='simplex_projection or softmax or sigmoid_projection', default='simplex_projection')
-    parser.add_argument('--classifier_NN', type=str, help='resnet9 or resnet18 or resnet34', default='resnet9')
+    parser.add_argument('--classifier_NN', type=str, help='resnet9 or resnet18 or resnet34', default='fcnn_dropout_batchnorm')
 
     parser.add_argument('--learning_rate', type=float, help='Learning rate', default=0.001)
     parser.add_argument('--batch_size', type=int, help='Batch Size', default=128)
@@ -68,11 +68,11 @@ def parse_args():
 def main(args):
     pl.seed_everything(args.seed)
 
-    dm = CrowdsourcingDataModule(dataset_name="music", data_dir="data", logger=logging.getLogger(),
+    dm = CrowdsourcingDataModule(dataset_name=args.dataset, data_dir="data", logger=logging.getLogger(),
                                  batch_size=args.batch_size, num_workers=args.num_workers, args=args)
     dm.setup()
 
-    model = GeoCrowdNet(input_dim=124, num_classes=10, num_annotators=44,
+    model = GeoCrowdNet(input_dim=124, num_classes=args.K, num_annotators=args.M,
                         # init_method='mle_based', annotations_list=dm.full_dataset.annotations_list_maxmig,
                         init_method='identity',
                         regularization_type=args.regularization_type, lambda_reg=args.lambda_reg, args=args)
@@ -89,7 +89,7 @@ def main(args):
 
     # Load the best model checkpoint
     best_model_path = checkpoint_callback.best_model_path
-    best_model = GeoCrowdNet.load_from_checkpoint(best_model_path, input_dim=124, num_classes=10, num_annotators=44,
+    best_model = GeoCrowdNet.load_from_checkpoint(best_model_path, input_dim=124, num_classes=args.K, num_annotators=args.M,
                                                   regularization_type=args.regularization_type,
                                                   init_method='identity',
                                                   lambda_reg=args.lambda_reg, args=args)

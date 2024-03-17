@@ -4,6 +4,8 @@ import torch.nn.functional as F
 import pytorch_lightning as pl
 from torchmetrics import Accuracy
 
+from helpers.arch import ResNet9, Lenet
+
 
 def confusion_matrix_init_mle_based(annotations, M, K):
     # MLE initialization for confusion matrices
@@ -39,14 +41,21 @@ class GeoCrowdNet(pl.LightningModule):
         self.val_accuracy = Accuracy(task='multiclass', num_classes=num_classes)
         self.test_accuracy = Accuracy(task='multiclass', num_classes=num_classes)
 
-        self.classifier = nn.Sequential(
-            nn.Linear(input_dim, 128),
-            nn.ReLU(),
-            nn.BatchNorm1d(128),
-            nn.Dropout(0.5),
-            nn.Linear(128, num_classes),
-            nn.Softmax(dim=1)
-        )
+        if self.args.classifier_NN == 'fcnn_dropout_batchnorm':
+            self.classifier = nn.Sequential(
+                nn.Linear(input_dim, 128),
+                nn.ReLU(),
+                nn.BatchNorm1d(128),
+                nn.Dropout(0.5),
+                nn.Linear(128, num_classes),
+                nn.Softmax(dim=1)
+            )
+        elif self.args.classifier_NN == 'resnet9':
+            self.classifier = ResNet9(num_classes=num_classes)
+        elif self.args.classifier_NN == 'lenet':
+            self.classifier = Lenet(num_classes=num_classes)
+        else:
+            raise ValueError(f"Invalid fnet_type: {self.args.classifier_NN}")
 
         if init_method == 'identity':
             self.confusion_matrices = nn.ParameterList(

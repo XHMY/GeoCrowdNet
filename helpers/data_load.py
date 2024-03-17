@@ -1,3 +1,4 @@
+import numpy as np
 import torch.utils.data as Data
 from numpy import genfromtxt
 # def mnist_dataset(train=True, transform=None, target_transform=None, split_per=0.9, random_seed=1, num_class=10):
@@ -15,7 +16,7 @@ class cifar10_dataset(Data.Dataset):
         self.target_transform = target_transform
         self.train = train
 
-        original_images = np.load('data/cifar10/train_images.npy')
+        original_images = np.load('data/cifar10/train_images.npy').astype(np.float32)
         original_labels = np.load('data/cifar10/train_labels.npy')
         num_class = 10
 
@@ -65,8 +66,8 @@ class cifar10_dataset(Data.Dataset):
             self.train_labels[index]
         else:
             img, label = self.val_data[index], self.val_labels[index]
-
-        img = Image.fromarray(img)
+        img = np.transpose(img, (2, 0, 1))
+        # img = Image.fromarray(img)
 
         if self.transform is not None:
             img = self.transform(img)
@@ -94,7 +95,7 @@ class cifar10_test_dataset(Data.Dataset):
         self.target_transform = target_transform
         self.train = train
 
-        self.test_data = np.load('data/cifar10/test_images.npy')
+        self.test_data = np.load('data/cifar10/test_images.npy').astype(np.float32)
         self.test_labels = np.load('data/cifar10/test_labels.npy')
         self.test_data = self.test_data.reshape((10000, 3, 32, 32))
         self.test_data = self.test_data.transpose((0, 2, 3, 1))
@@ -102,8 +103,8 @@ class cifar10_test_dataset(Data.Dataset):
     def __getitem__(self, index):
 
         img, label = self.test_data[index], self.test_labels[index]
-
-        img = Image.fromarray(img)
+        img = np.transpose(img, (2, 0, 1))
+        # img = Image.fromarray(img)
 
         if self.transform is not None:
             img = self.transform(img)
