@@ -29,6 +29,7 @@ class GeoCrowdNet(pl.LightningModule):
                  init_method='identity', args=None, annotations_list=None):
         super().__init__()
         self.args = args
+        self.save_hyperparameters()
         self.input_dim = input_dim
         self.num_classes = num_classes
         self.num_annotators = num_annotators
@@ -85,13 +86,12 @@ class GeoCrowdNet(pl.LightningModule):
             loss /= self.num_annotators
 
         if self.regularization_type == 'F':
-            flag = 0
             F_matrix = f_outputs
             reg_term = torch.logdet(torch.matmul(F_matrix.T, F_matrix))
             # check if reg_term is nan
             if torch.isnan(reg_term) or torch.isinf(reg_term):
                 reg_term = 0
-                flag = 1
+                print('reg_term is nan or inf')
         elif self.regularization_type == 'W':
             W_matrix = F.softmax(torch.stack([cm for cm in self.confusion_matrices]), dim=1)
             W_matrix = W_matrix.view(self.num_annotators * self.num_classes, self.num_classes)

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="train F" type="PythonConfigurationType" factoryName="Python" singleton="true">
+  <configuration default="false" name="train F" type="PythonConfigurationType" factoryName="Python" singleton="false">
     <module name="GeoCrowdNet" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -14,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-    <option name="PARAMETERS" value="--accelerator cpu --experiment_name music_F --regularization_type F --K 10 --lambda_reg 0.001 --n_epoch 1000" />
+    <option name="PARAMETERS" value="--accelerator cpu --experiment_name music_F --regularization_type F --K 10 --lambda_reg 0.01 --n_epoch 1000 --batch_size 64" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

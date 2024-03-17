@@ -88,14 +88,14 @@ def main(args):
     trainer.fit(model, dm)
 
     # Load the best model checkpoint
-    # best_model_path = checkpoint_callback.best_model_path
-    # best_model = GeoCrowdNet.load_from_checkpoint(best_model_path, input_dim=124, num_classes=10, num_annotators=44,
-    #                                               regularization_type=args.regularization_type,
-    #                                               init_method='identity',
-    #                                               lambda_reg=args.lambda_reg, args=args)
+    best_model_path = checkpoint_callback.best_model_path
+    best_model = GeoCrowdNet.load_from_checkpoint(best_model_path, input_dim=124, num_classes=10, num_annotators=44,
+                                                  regularization_type=args.regularization_type,
+                                                  init_method='identity',
+                                                  lambda_reg=args.lambda_reg, args=args)
 
     # Test the best model
-    results = trainer.test(model, datamodule=dm)
+    results = trainer.test(best_model, datamodule=dm)
     with open(f'logs/results.txt', 'a') as f:
         f.write(f"{args.experiment_name},{args.seed},{results[0]['test_accuracy']}\n")
 
