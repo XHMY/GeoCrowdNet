@@ -131,5 +131,5 @@ class GeoCrowdNet(pl.LightningModule):
         self.log('test_accuracy', self.test_accuracy, on_step=False, on_epoch=True)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.args.learning_rate, weight_decay=1e-5)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.args.learning_rate, weight_decay=1e-4)
         return optimizer
