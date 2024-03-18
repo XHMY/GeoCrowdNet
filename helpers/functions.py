@@ -185,7 +185,7 @@ def generate_annotator_labels(A, pattern, p, l, y):
                 row.append(one_hot(annotations[i, r], K)[0, :])
         answers_bin_missings.append(row)
 
-    answers_bin_missings = np.array(answers_bin_missings, dtype=np.int32)
+    answers_bin_missings = np.array(answers_bin_missings, dtype=np.int64)
 
     return f, annotations, answers_bin_missings, annotator_label, annotators_per_sample, annotator_label_mask
 

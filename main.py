@@ -8,6 +8,7 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from crowdsourcing_data_module import CrowdsourcingDataModule
 from model import GeoCrowdNet
 
+torch.set_float32_matmul_precision('medium')
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -42,7 +43,7 @@ def parse_args():
                         help='simplex_projection or softmax or sigmoid_projection', default='simplex_projection')
     parser.add_argument('--classifier_NN', type=str, help='resnet9 or resnet18 or resnet34', default='fcnn_dropout_batchnorm')
 
-    parser.add_argument('--learning_rate', type=float, help='Learning rate', default=0.01)
+    parser.add_argument('--learning_rate', type=float, help='Learning rate', default=0.001)
     parser.add_argument('--batch_size', type=int, help='Batch Size', default=128)
     parser.add_argument('--n_epoch', type=int, help='Number of Epochs', default=100)
     parser.add_argument('--n_epoch_maxmig', type=int, help='Number of Epochs for Maxmig', default=20)

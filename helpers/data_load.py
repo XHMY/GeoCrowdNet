@@ -358,7 +358,7 @@ class music_dataset(Data.Dataset):
         for i in range(args.K):
             self.train_labels[self.train_label_str == self.label_list[i]] = i
 
-        self.train_labels = self.train_labels.astype(int)
+        self.train_labels = self.train_labels.astype(np.int64)
         self.train_data, self.val_data, self.train_labels, self.val_labels, train_set_index = helpers.tools.dataset_split(
             self.train_data, self.train_labels, split_per, random_seed, args.K)
 
