@@ -62,6 +62,7 @@ def parse_args():
     parser.add_argument('--regularization_type', type=str, default='F', help='Regularization type (F or W)')
     parser.add_argument('--lambda_reg', type=float, default=0.2, help='Regularization strength')
     parser.add_argument('--plain', action='store_true', default=False, help='Use plain model (no confusion matrices)')
+    parser.add_argument('--use_pretrained', action='store_true', default=False, help='Use pretrained model')
 
     return parser.parse_args()
 

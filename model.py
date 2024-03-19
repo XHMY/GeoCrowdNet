@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
 from torchmetrics import Accuracy
-
+import torchvision
 from helpers.arch import ResNet9, Lenet
 
 
@@ -54,6 +54,9 @@ class GeoCrowdNet(pl.LightningModule):
             self.classifier = ResNet9(num_classes=num_classes)
         elif self.args.classifier_NN == 'lenet':
             self.classifier = Lenet(num_classes=num_classes)
+        elif self.args.classifier_NN.startswith('torchvision.models'):
+            self.classifier = eval(self.args.classifier_NN)(pretrained=self.args.use_pretrained)
+            self.classifier.fc = nn.Linear(self.classifier.fc.in_features, num_classes)
         else:
             raise ValueError(f"Invalid fnet_type: {self.args.classifier_NN}")
 
