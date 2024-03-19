@@ -18,7 +18,7 @@ class cifar10_dataset(Data.Dataset):
 
         original_images = np.load('data/cifar10/train_images.npy').astype(np.float32)
         original_labels = np.load('data/cifar10/train_labels.npy')
-        num_class = 10
+        num_class = args.K
 
         print(original_images.shape)
         logger.info('Splitting train and validation data')

@@ -23,7 +23,7 @@ class CrowdsourcingDataModule(pl.LightningDataModule):
     def _get_dataset_class(self):
         if self.dataset_name == "mnist":
             return mnist_dataset
-        elif self.dataset_name == "cifar10":
+        elif self.dataset_name in ["cifar10", "food11"]:
             return cifar10_dataset
         elif self.dataset_name == "labelme":
             return labelme_dataset
