@@ -1,8 +1,12 @@
+import os
+from os.path import join
+
 import torch
 from torch.utils.data import DataLoader, random_split
 import pytorch_lightning as pl
 from helpers.data_load import *
 import logging
+from helpers.visualize import plot_confusion_matrices
 
 
 class CrowdsourcingDataModule(pl.LightningDataModule):
@@ -44,6 +48,10 @@ class CrowdsourcingDataModule(pl.LightningDataModule):
             )
         if stage == 'test' or stage is None:
             self.test_dataset = self.dataset_class(train=False, **self.kwargs)
+
+    def plot_gt_confusion_matrix(self, output_dir=None):
+        os.makedirs(output_dir, exist_ok=True)
+        plot_confusion_matrices([i for i in self.full_dataset.A_true], join(output_dir, "gt_confusion_matrix"))
 
     def train_dataloader(self):
         return DataLoader(self.train_dataset, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True,

@@ -28,7 +28,7 @@ def generate_confusion_matrices(M, K, gamma, type):
             A[m] = np.matmul(A[m], np.diag(np.divide(1, np.sum(A[m], axis=0))))
 
     elif type == 'separable-and-diagonally-dominant':
-        i = np.asscalar(np.random.choice(M, 1))
+        i = np.random.choice(M, 1).item()
         A[i] = np.identity(K)
         for m in range(0, i):
             A[m] = np.identity(K) + gamma * np.random.uniform(0, 1, (K, K))

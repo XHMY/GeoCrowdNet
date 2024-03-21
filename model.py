@@ -1,3 +1,6 @@
+import os
+from os.path import join
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,6 +8,7 @@ import pytorch_lightning as pl
 from torchmetrics import Accuracy
 import torchvision
 from helpers.arch import ResNet9, Lenet
+from helpers.visualize import plot_confusion_matrices
 
 
 def confusion_matrix_init_mle_based(annotations, M, K):
@@ -85,6 +89,14 @@ class GeoCrowdNet(pl.LightningModule):
         A = torch.stack([cm for cm in self.confusion_matrices])
         y = torch.einsum('ij, bkj -> ibk', f_outputs, A)
         return f_outputs, y, A
+
+    def plot_confusion_matrices(self, output_dir=None):
+        os.makedirs(output_dir, exist_ok=True)
+        plot_confusion_matrices([F.softmax(cm.cpu().detach(), dim=0).numpy() for cm in self.confusion_matrices], join(output_dir, f"cm_epoch{self.current_epoch}_"))
+
+    def on_validation_epoch_end(self) -> None:
+        if self.args.plot_confusion_matrices:
+            self.plot_confusion_matrices(output_dir=join("figures", self.logger.name))
 
     def training_step(self, batch, batch_idx):
         x, annotations, annot_onehot, annot_mask, annot_list, y = batch

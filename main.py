@@ -1,5 +1,6 @@
 import argparse
 import logging
+from os.path import join
 
 import torch
 import pytorch_lightning as pl
@@ -63,6 +64,7 @@ def parse_args():
     parser.add_argument('--lambda_reg', type=float, default=0.2, help='Regularization strength')
     parser.add_argument('--plain', action='store_true', default=False, help='Use plain model (no confusion matrices)')
     parser.add_argument('--use_pretrained', action='store_true', default=False, help='Use pretrained model')
+    parser.add_argument('--plot_confusion_matrices', action='store_true', default=False, help='Plot confusion matrices')
 
     return parser.parse_args()
 
@@ -73,6 +75,9 @@ def main(args):
     dm = CrowdsourcingDataModule(dataset_name=args.dataset, data_dir="data", logger=logging.getLogger(),
                                  batch_size=args.batch_size, num_workers=args.num_workers, args=args)
     dm.setup()
+
+    if args.annotator_type == 'synthetic' and args.plot_confusion_matrices:
+        dm.plot_gt_confusion_matrix(output_dir=join("figures", args.experiment_name))
 
     model = GeoCrowdNet(input_dim=124, num_classes=args.K, num_annotators=args.M,
                         # init_method='mle_based', annotations_list=dm.full_dataset.annotations_list_maxmig,
