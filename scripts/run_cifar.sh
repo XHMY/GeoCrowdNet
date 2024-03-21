@@ -35,6 +35,7 @@ CUDA_VISIBLE_DEVICES=$((seed-0)) python main.py --accelerator gpu --experiment_n
 --annotator_type synthetic --num_workers 6 --gamma $gam --seed $seed &
 done
 wait
+done
 
 for seed in 0 1 2 3 # 4
 do
@@ -44,4 +45,3 @@ CUDA_VISIBLE_DEVICES=$((seed-0)) python main.py --accelerator gpu --experiment_n
 --annotator_type synthetic --num_workers 6 --gamma $gam --seed $seed &
 done
 wait
-done
