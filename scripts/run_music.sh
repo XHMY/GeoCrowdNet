@@ -4,7 +4,7 @@ for seed in 0 1 2 3 4
 do
 for type in W F no
 do
-python main.py --accelerator cpu \
+python main.py --accelerator cpu --dataset music \
 --experiment_name "music_${type}_lambda${lam}" \
 --regularization_type $type --K 10 --M 44 \
 --lambda_reg $lam --batch_size 64 --n_epoch 1000 --seed $seed &
