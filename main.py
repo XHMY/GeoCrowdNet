@@ -104,4 +104,9 @@ def main(args):
 
 if __name__ == '__main__':
     args = parse_args()
+    with open(f'logs/results.txt', 'r') as f:
+        res_lines = f.readlines()
+    if any(line.startswith(f"{args.experiment_name},{args.seed}") for line in res_lines):
+        print(f"Experiment {args.experiment_name},{args.seed} already exists, skipping...")
+        exit(0)
     main(args)

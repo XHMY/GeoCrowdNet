@@ -56,7 +56,12 @@ class GeoCrowdNet(pl.LightningModule):
             self.classifier = Lenet(num_classes=num_classes)
         elif self.args.classifier_NN.startswith('torchvision.models'):
             self.classifier = eval(self.args.classifier_NN)(pretrained=self.args.use_pretrained)
-            self.classifier.fc = nn.Linear(self.classifier.fc.in_features, num_classes)
+            if "resnet" in self.args.classifier_NN:
+                self.classifier.fc = nn.Linear(self.classifier.fc.in_features, num_classes)
+            elif "swin" in self.args.classifier_NN:
+                self.classifier.head = nn.Linear(self.classifier.head.in_features, num_classes)
+            elif "vgg" in self.args.classifier_NN:
+                self.classifier.classifier[6] = nn.Linear(self.classifier.classifier[6].in_features, num_classes)
         else:
             raise ValueError(f"Invalid fnet_type: {self.args.classifier_NN}")
 
