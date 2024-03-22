@@ -987,3 +987,11 @@ cifar-syn_no_gamma0.3_model-resnet9,1,0.352400004863739
 cifar-syn_no_gamma0.3_model-resnet9,0,0.3741999864578247
 cifar-syn_no_gamma0.3_model-resnet9,3,0.4058000147342682
 cifar-syn_no_gamma0.3_model-resnet9,2,0.35040000081062317
+cifar-syn-rowflip_plain_lambda0.0001_flip1_model-resnet18,0,0.5974000096321106
+cifar-syn-rowflip_W_lambda0.0001_flip1_model-resnet18,0,0.7936000227928162
+cifar-syn-rowflip_F_lambda0.0001_flip1_model-resnet18,0,0.782800018787384
+cifar-syn-rowflip_no_lambda0.0001_flip1_model-resnet18,0,0.7893999814987183
+cifar-syn-rowflip_plain_lambda0.0001_flip10_model-resnet18,0,0.5406000018119812
+cifar-syn-rowflip_F_lambda0.0001_flip10_model-resnet18,0,0.13779999315738678
+cifar-syn-rowflip_no_lambda0.0001_flip10_model-resnet18,0,0.12380000203847885
+cifar-syn-rowflip_W_lambda0.0001_flip10_model-resnet18,0,0.11339999735355377
