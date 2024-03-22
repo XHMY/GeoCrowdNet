@@ -1,5 +1,7 @@
 # Unofficial Implementation of "Deep learning from crowdsourced labels: Coupled cross-entropy minimization, identifiability, and regularization" (https://arxiv.org/abs/2306.03288)
 
+The official implementation is available [here](https://github.com/shahanaibrahimosu/end-to-end-crowdsourcing).
+
 ## Installation
 
 Please install the latest version of PyTorch before running the code.
