@@ -9,6 +9,6 @@ python main.py --accelerator cpu --dataset music \
 --regularization_type $type --K 10 --M 44 \
 --lambda_reg $lam --batch_size 64 --n_epoch 1000 --seed $seed &
 done
-done
 wait
+done
 done

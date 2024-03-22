@@ -14,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-    <option name="PARAMETERS" value="--accelerator cpu --experiment_name music_W --regularization_type W --K 10 --lambda_reg 0.01 --n_epoch 1000 --batch_size 32" />
+    <option name="PARAMETERS" value="--accelerator cpu --dataset music --experiment_name music_W_lambda0.0001 --regularization_type W --K 10 --M 44 --lambda_reg 0.0001 --batch_size 64 --n_epoch 1000 --seed 3" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
