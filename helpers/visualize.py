@@ -9,3 +9,5 @@ def plot_confusion_matrices(A_list, output_path):
     for i, d in enumerate(disp):
         d.plot(values_format='.2f')
         plt.savefig(output_path + f'{i}.pdf')
+
+    plt.close()

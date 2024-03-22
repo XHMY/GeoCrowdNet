@@ -88,13 +88,10 @@ def generate_confusion_matrices(M, K, gamma, type):
                 A[m, k, k] = 1 - gamma
     elif type == 'row-flipper':
         A = np.stack([np.eye(K) for _ in range(M)])
-        # randomly flip a row
-        flip_num = int(gamma * K)
         for m in range(M):
-            for _ in range(flip_num):
-                i, j = np.random.choice(K, 2, replace=False)
-                A[m, i, i] = 0
-                A[m, j, i] = 1
+            flip_row = np.random.choice(K, K, replace=False)
+            A[m] = A[m][flip_row]
+
     else:
         print('Incorrect choice for confusion matrix trype')
     return A
